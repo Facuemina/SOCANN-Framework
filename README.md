@@ -1,2 +1,2 @@
 # SOCANN-Framework
-JAX-accelerated framework for simulating self-organizing Continuous Attractor Neural Networks (CANNs) through Hebbian plasticity.
+JAX-accelerated framework for simulating Self-Organizing Continuous Attractor Neural Networks (SOCANNs) through Hebbian plasticity.
