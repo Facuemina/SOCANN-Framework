@@ -1,0 +1,31 @@
+# ==============================================================================
+# SelfOrganizedCANN-Framework Dependencies
+# ==============================================================================
+#
+# IMPORTANT: JAX INSTALLATION (CPU vs. GPU)
+# -----------------------------------------
+# By default, running `pip install -r requirements.txt` will install the CPU 
+# version of JAX. 
+#
+# If you have an NVIDIA GPU, it is HIGHLY RECOMMENDED to install the CUDA 
+# version for significantly faster simulations. To do this, run the appropriate 
+# command for your system BEFORE installing this requirements file:
+#
+# For NVIDIA GPUs (CUDA 12):
+# pip install -U "jax[cuda12]"
+#
+# For more detailed GPU installation instructions, visit:
+# https://jax.readthedocs.io/en/latest/installation.html
+# ==============================================================================
+
+# Data Processing & Math
+numpy>=1.24.0
+scipy>=1.10.0
+
+# Visualization & Progress Tracking
+matplotlib>=3.7.0
+tqdm>=4.65.0
+
+# Core Engine (Defaults to CPU unless overridden by instructions above)
+jax>=0.4.13
+jaxlib>=0.4.13
