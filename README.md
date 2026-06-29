@@ -34,9 +34,5 @@ SelfOrganizedCANN-Framework/
 │   ├── gridsearch_m.py     # Multiprocessing launcher for adaptation parameters
 │   └── gridsearch_alphas.py# Multiprocessing launcher for weight learning alphas
 │
-├── paper_figures/          # Scripts to reproduce publication visualizations
-│   ├── FIGURE4_Multilayer.py
-│   └── FIGURE8_PathIntegration.py
-│
 ├── requirements.txt        # Python dependencies
 └── README.md
