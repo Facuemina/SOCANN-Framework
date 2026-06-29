@@ -10,7 +10,7 @@ optimized JAX integration loops for CANN simulations.
 import numpy as np
 from jax import numpy as jnp
 from jax import jit, lax
-from theory import learned_U_std, theoretical_distance
+from src.theory import learned_U_std, theoretical_distance
 
 # ---------------------------------------------------------
 # INITIALIZATIONS & TOPOLOGY
