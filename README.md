@@ -6,7 +6,7 @@
 
 A high-performance JAX-based framework for simulating **Continuous Attractor Neural Networks (CANNs)** undergoing **Hebbian plasticity**. 
 
-This repository provides the computational tools to simulate self-organizing neural dynamics, specifically tailored for research in mammalian spatial navigation and grid cell modeling. It is optimized for GPU acceleration, memory-efficient integration, and large-scale parameter grid searches.
+This repository provides the computational tools to simulate self-organizing neural dynamics. It is optimized for GPU acceleration, memory-efficient integration, and large-scale parameter grid searches.
 
 ## Key Features
 * **JAX-Accelerated Physics:** Custom ODE integrators (`lax.scan`, `lax.fori_loop`) for lightning-fast, compiled neural simulations.
