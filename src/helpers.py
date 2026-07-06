@@ -16,32 +16,11 @@ def moving_average(a, n=5):
     ret[n:] = ret[n:] - ret[:-n]
     return ret[n-1:] / n
 
-def rectify_positions(x, T, reverse=True):
-    """Rectifies positions to remove periodic boundary jumps for smooth plotting."""
-    if type(x) == list:
-        x2 = np.zeros(len(x))
-        x2[:] = x[::-1]
-    else:
-        m = np.argmax(x.shape)
-        x2 = np.zeros(x.shape[m])
-        if m == 0 and len(x.shape) > 1:
-            x2[:] = x[:,0][::-1] if reverse else x[:,0]
-        elif len(x.shape) == 1:
-            x2[:] = x[::-1] if reverse else x
-        else:
-            x2[:] = x[0][::-1] if reverse else x[0]
-    
-    x_rectified = np.zeros_like(x2)
-    x_rectified[0] = x2[0]
-    
-    for i in range(1, len(x2)):
-        D = x2[i] - x2[i-1]
-        if np.abs(D) > T/2:
-            x_rectified[i] = -np.sign(D)*T + D + x_rectified[i-1]
-        else:
-            x_rectified[i] = D + x_rectified[i-1]
-    
-    return x_rectified[::-1] if reverse else x_rectified
+def rectify_positions(x, L):
+    """Unwraps periodic positions into a continuous trajectory."""
+    dx = jnp.diff(x)
+    true_dx = dx - L * jnp.round(dx / L)
+    return jnp.concatenate([jnp.array([x[0]]), x[0] + jnp.cumsum(true_dx)])
 
 def center_of_mass(x, y, L=1, periodic=True):
     """Calculates the periodic center of mass."""

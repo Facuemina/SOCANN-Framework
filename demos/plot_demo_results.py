@@ -18,7 +18,7 @@ from src.helpers import sort_connectivity_matrix
 def parse_args():
     parser = argparse.ArgumentParser(description="Plot initial and final states from CANN demo.")
     parser.add_argument("--N", type=int, default=512, help="Number of neurons to match the demo data")
-    parser.add_argument("--total_steps", type=int, default=500000, help="Total simulation steps to match the demo data")
+    parser.add_argument("--total_steps", type=int, default=5000000, help="Total simulation steps to match the demo data")
     return parser.parse_args()
 
 def main():
