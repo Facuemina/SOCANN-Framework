@@ -28,6 +28,25 @@ def center_of_mass(x, y, L=1, periodic=True):
     Ycm = jnp.sum(jnp.sin(x / L * 2 * jnp.pi) * y) / jnp.sum(y)
     return jnp.mod(jnp.arctan2(Ycm, Xcm), 2 * jnp.pi) / (2 * jnp.pi) * L
 
+def circ_std(M, L):
+    """Calculates the periodic standard deviation along each row of a weight matrix."""
+    angles = np.linspace(0, 2 * np.pi, M.shape[1], endpoint=False).reshape(1, -1)
+    row_sums = np.sum(M, axis=1, keepdims=True)
+    Mnorm = M / np.where(row_sums == 0, 1.0, row_sums)
+    C = np.sum(np.cos(angles) * Mnorm, axis=1)
+    S = np.sum(np.sin(angles) * Mnorm, axis=1)
+    mu = np.mod(np.arctan2(S, C), 2 * np.pi).reshape(-1, 1)
+    D = np.abs(mu - angles) / (2 * np.pi) * L
+    D = np.minimum(D, L - D)
+    return np.sqrt(np.sum(Mnorm * (D ** 2), axis=1))
+
+def circ_mean(M, L):
+    angles = jnp.linspace(0,2*jnp.pi,M.shape[1],False).reshape(1,-1)
+    Mnorm = M / M.sum(axis=1).reshape(-1,1)
+    C = np.sum(np.cos(angles) * Mnorm, axis=1)
+    S = np.sum(np.sin(angles) * Mnorm, axis=1)
+    return jnp.mod(jnp.arctan2(S, C), 2*jnp.pi) / (2*jnp.pi) * L
+
 @jit
 def sort_connectivity_matrix(matrix):
     """Sorts a weight matrix by its maximum values to visualize connectivity."""

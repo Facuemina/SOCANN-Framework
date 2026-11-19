@@ -63,12 +63,31 @@ def _cann_dynamics(U, V, W_ff, W_rec, I0, v_curr, neural_params, input_params):
     dt, sR, L, v_eq, R0, a_vel = input_params
     
     # Firing rate
-    U_pos = jnp.maximum(U, 0)
-    norm_sq = jnp.sum(U_pos ** g)
-    fU = gain * (U_pos ** g) / (1 + k * norm_sq)
+    U_pos = jnp.maximum(U, 0) ** g
+    norm_sq = jnp.sum(U_pos)
+    fU = gain * (U_pos) / (1 + k * norm_sq)
     
     # Dynamics
     dU = (-U - V + (W_ff @ I0) + (W_rec @ fU) + a_vel * (v_curr - v_eq)) * tau_inv
+    dV = (-V + m * U) * tauv_inv
+    
+    return dU, dV, fU
+
+def _cann_dynamics_FF(U, V, W_ff, I0, v_curr, neural_params, input_params):
+    """
+    Core ODE system for the CANN. 
+    This function is inlined by the JAX compiler in the simulation loops.
+    """
+    tau_inv, tauv_inv, m, k, g, gain = neural_params
+    dt, sR, L, v_eq, R0, a_vel = input_params
+    
+    # Firing rate
+    U_pos = jnp.maximum(U, 0) ** g
+    norm_sq = jnp.sum(U_pos)
+    fU = gain * (U_pos) / (1 + k * norm_sq)
+    
+    # Dynamics
+    dU = (-U - V + (W_ff @ I0) + a_vel * (v_curr - v_eq)) * tau_inv
     dV = (-V + m * U) * tauv_inv
     
     return dU, dV, fU
@@ -99,7 +118,7 @@ def run_basic_simulation(U0, V0, W_ff, W_rec, x0, v, neural_params, input_params
         U_pos = jnp.maximum(U_next, 0)
         u_posx = jnp.sum(jnp.cos(angles) * U_pos) / jnp.sum(U_pos)
         u_posy = jnp.sum(jnp.sin(angles) * U_pos) / jnp.sum(U_pos)
-        u_pos = jnp.mod(jnp.atan2(u_posy, u_posx), 2 * jnp.pi) / (2 * jnp.pi) * L
+        u_pos = jnp.mod(jnp.arctan2(u_posy, u_posx), 2 * jnp.pi) / (2 * jnp.pi) * L
         
         return (U_next, V_next, x_input_next), (x_input_next, u_pos)
     
@@ -140,3 +159,34 @@ def run_learning_ff_and_rec(U0, V0, W_ff0, W_rec0, x0, v, neural_params, learnin
     
     Uf, Vf, Wf, Wrecf, xf = lax.fori_loop(T0, T, step, (U0, V0, W_ff0, W_rec0, x0))
     return Uf, Vf, Wf, Wrecf, xf
+
+def run_learning_ff(U0, V0, W_ff0, x0, v, neural_params, learning_params, pos, T, T0=0): 
+    """Simulation with Hebbian plasticity on both feedforward and recurrent weights."""
+            
+    @jit
+    def step(i, carry):
+        U, V, W_ff, x_input = carry
+        
+        # Unpack learning parameters 
+        dt, betaJ, etaJ, sR, L, v_eq, av, R0, ain = learning_params
+        input_params = (dt, sR, L, v_eq, R0, av)
+        
+        v0 = lax.dynamic_index_in_dim(v, i, axis=0, keepdims=False)
+        x_input_next = jnp.mod(x_input + dt * v0, L)
+        I0 = R0 * gaussian(pos, x_input_next, sR, L)
+        
+        # Get ODE derivatives
+        dU, dV, fU = _cann_dynamics_FF(U, V, W_ff, I0, v0, neural_params, input_params)
+        
+        # Hebbian plasticity steps
+        dW_ff = etaJ * fU * (I0.T - ain * W_ff ** betaJ)
+        
+        # Integration
+        U_next = U + dt * dU
+        V_next = V + dt * dV
+        W_ff_next = jnp.maximum(W_ff + dt * dW_ff, 0)
+        
+        return U_next, V_next, W_ff_next, x_input_next
+    
+    Uf, Vf, Wf, xf = lax.fori_loop(T0, T, step, (U0, V0, W_ff0, x0))
+    return Uf, Vf, Wf, xf

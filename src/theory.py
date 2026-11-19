@@ -9,6 +9,7 @@ Continuous Attractor Neural Networks (CANNs) with Hebbian plasticity.
 
 import numpy as np
 
+corr_fact = 0.7166 #empirical correction factor
 def y(m, v, G):
     """
     Normalized distance between equilibrium U and V bumps.
@@ -30,7 +31,7 @@ def theoretical_speed(m, tau, tauv, sigma):
     """
     Theoretical speed in recurrent CANN.
     """
-    return np.sqrt(2) * sigma / tauv * np.sqrt(m * tauv / tau - np.sqrt(m * tauv / tau))
+    return corr_fact * 2 * sigma / tauv * np.sqrt(m * tauv / tau - np.sqrt(m * tauv / tau))
 
 def learned_weight_std(beta, sigma):
     """
@@ -48,8 +49,14 @@ def theoretical_distance(m, tau, tauv, sigma_u, v=0):
     """
     Theoretical lag between the adaptation bump and the neural bump.
     """
-    corr_fact = 0.7166 #empirical correction factor
     if v == 0:
         return corr_fact * np.sqrt(2) * sigma_u * np.sqrt(1 - np.sqrt(tau / (m * tauv)))
     else:
         return sigma_u**2 / (tauv * v) * (np.sqrt(1 + 2 * (tauv * v / sigma_u)**2) - 1)
+    
+def learned_weight_amplitude(beta, sigma, R0=30.0, alpha=1.0):
+    """
+    Theoretical learned weight amplitude A_J (or J_0).
+    """
+    std_w = learned_weight_std(beta, sigma)
+    return (R0 / alpha / np.sqrt((2 * np.pi * std_w**2) ** (1 - beta) / beta)) ** (1 / beta)
