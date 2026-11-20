@@ -15,8 +15,7 @@ import matplotlib.patheffects as patheffects
 # Add repo root to Python's module path
 repo_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(repo_root))
-from src.theory import learned_U_std, gamma
-from src.engine import gaussian
+from src.theory import learned_U_std, gamma, estimate_gamma_periodic
 
 plt.rcParams['axes.titlesize'] = 25
 plt.rcParams['axes.labelsize'] = 25
@@ -24,34 +23,6 @@ plt.rcParams['xtick.labelsize'] = 20
 plt.rcParams['ytick.labelsize'] = 20
 plt.rcParams['legend.fontsize'] = 15
 
-
-# def estimate_g_periodic(U, x0, sigma, L):
-#     N = len(U)
-#     pos = np.linspace(0, L, N, endpoint=False)
-#     d = (pos - x0 + L / 2.0) % L - L / 2.0
-#     g0 = np.exp(-0.5 * (d / sigma) ** 2)
-#     g1 = (d / sigma) * g0
-#     A = np.column_stack([g0, g1])
-#     (c0, c1), _, _, _ = np.linalg.lstsq(A, U, rcond=None)
-#     return c0, c1
-
-def estimate_g_periodic(y, mu, std, L):
-    x_ = np.linspace(0,L,len(y),False)
-    dx = x_[1] - x_[0]
-    z_ = (x_ - mu + L/2) % L - L/2
-    def CANN_eigen_func0(z, std, L):
-        #norm = jnp.sqrt(jnp.sqrt(jnp.pi)*2*std)
-        norm = 1
-        return norm * gaussian(z, 0, std, L)
-    def CANN_eigen_func1(z, std, L):
-        #norm = jnp.sqrt((jnp.sqrt(jnp.pi) * 2 * std) / (2))
-        norm = 1
-        return norm * gaussian(z, 0, std, L) * 2 * z / std
-    
-    a0 = np.sum(CANN_eigen_func0(z_, std, L) * y) * dx
-    a1 = np.sum(CANN_eigen_func1(z_, std, L) * y) * dx
-    
-    return a0, a1
 
 
 def compute_gamma_contours(Gamma_val, m_lims, v_lims, nfig=1,
@@ -125,8 +96,13 @@ def compute_gamma_contours(Gamma_val, m_lims, v_lims, nfig=1,
 
 
 #%% Compute empirical gammas
-path2load = repo_root.parent / 'figure3-ff-asymmetry-data'
+# Uncomment if data is outside the repo
+# path2load = repo_root.parent / 'figure3-ff-asymmetry-data'
+# Comment if data is outside the repo
+path2load = repo_root / 'data' / 'figure3-ff-asymmetry-data'
+path2save = repo_root / 'figures'
 data = np.load(path2load / 'ff_asymmetry_results.npz', allow_pickle=True)
+
 sim_params = data['params'].item()
 
 U_all = data['U_all']
@@ -152,7 +128,7 @@ for i, m in enumerate(m_vals):
         U = U_all[i, j]
         x = x_all[i, j]
 
-        c0, c1 = estimate_g_periodic(U.T[0], x, u_std, L)
+        c0, c1 = estimate_gamma_periodic(U.T[0], x, u_std, L)
         gammas[i, j] = c1 / c0
         gammas_theory[i, j] = np.sqrt(2) * gamma(m, v * tau / (np.sqrt(2) * u_std), tauv / tau)
 
@@ -184,5 +160,5 @@ for i, idx in enumerate(idx2plot):
     plt.legend()
 
 plt.tight_layout()
-plt.savefig(path2load / 'GammaAsymmetries.png', format='png', dpi=300)
+plt.savefig(path2save / 'figure3-GammaAsymmetries.png', format='png', dpi=300)
 plt.show()

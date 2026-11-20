@@ -8,6 +8,16 @@ Continuous Attractor Neural Networks (CANNs) with Hebbian plasticity.
 """
 
 import numpy as np
+import jax.numpy as jnp
+from jax import jit
+
+
+@jit
+def gaussian(x, y, std, L):
+    """Periodic Gaussian function."""
+    dx = jnp.minimum(jnp.abs(x - y), L - jnp.abs(x - y))
+    norm = 1 / jnp.sqrt(2 * jnp.pi * std**2)
+    return jnp.exp(-0.5 * (dx / std) ** 2) * norm
 
 corr_fact = 0.7166 #empirical correction factor
 def y(m, v, G):
@@ -60,3 +70,22 @@ def learned_weight_amplitude(beta, sigma, R0=30.0, alpha=1.0):
     """
     std_w = learned_weight_std(beta, sigma)
     return (R0 / alpha / np.sqrt((2 * np.pi * std_w**2) ** (1 - beta) / beta)) ** (1 / beta)
+
+def estimate_gamma_periodic(y, mu, std, L):
+    """
+    Project empirical bump against theoretical modes 0 and 1
+    """
+    x_ = np.linspace(0,L,len(y),False)
+    dx = x_[1] - x_[0]
+    z_ = (x_ - mu + L/2) % L - L/2
+    def CANN_eigen_func0(z, std, L):
+        norm = 1
+        return norm * gaussian(z, 0, std, L)
+    def CANN_eigen_func1(z, std, L):
+        norm = 1
+        return norm * gaussian(z, 0, std, L) * 2 * z / std
+    
+    a0 = np.sum(CANN_eigen_func0(z_, std, L) * y) * dx
+    a1 = np.sum(CANN_eigen_func1(z_, std, L) * y) * dx
+    
+    return a0, a1

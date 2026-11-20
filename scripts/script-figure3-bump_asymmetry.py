@@ -19,10 +19,9 @@ from tqdm import tqdm
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 from src.engine import (
     _cann_dynamics_FF,
-    create_gaussian_connectivity_matrix,
-    gaussian,
+    create_gaussian_connectivity_matrix
 )
-from src.theory import learned_U_std, learned_weight_std
+from src.theory import learned_U_std, learned_weight_std, gaussian
 
 
 def run_ff_simulation(U0, V0, W_ff, x0, v, neural_params, input_params, pos, T):
