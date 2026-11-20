@@ -3,7 +3,7 @@
 """
 Script for Figure 2: Global stability analysis of Feedforward Hebbian learning.
 Solves the generalized eigenvalue problem across beta, N_in, and alpha_J with 
-spatial resolution ds = 0.1 cm and k = 0.01, saving results and parameter 
+spatial resolution ds = 0.1 cm and k = 1e-20, saving results and parameter 
 dictionary to ../figure2-stability-ff-data/.
 """
 
