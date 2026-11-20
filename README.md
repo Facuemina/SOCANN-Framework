@@ -148,17 +148,7 @@ python scripts/figureN/<plotting_script>.py
 
 Replace `N` and the script names with the figure number and files you want to reproduce. Separating the two stages lets you re-style or tweak a figure without re-running the simulations.
 
-Large parameter sweeps are launched with multiprocessing:
-
-```bash
-# Sweep over firing-rate adaptation parameters
-python scripts/gridsearch_m.py
-
-# Sweep over feedforward/recurrent learning rates (alphas)
-python scripts/gridsearch_alphas.py
-```
-
-These jobs can be compute-intensive. A GPU and enough RAM for parallel workers are recommended. Analytical predictions from `src/theory.py` can be overlaid on simulation outputs to compare numerical and theoretical equilibria.
+A GPU and enough RAM are recommended (specially for parameter sweeps). Analytical predictions from `src/theory.py` can be overlaid on simulation outputs to compare numerical and theoretical equilibria.
 
 ## Citation
 
