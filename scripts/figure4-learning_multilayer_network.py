@@ -268,8 +268,10 @@ def main():
     ax_corr.set_ylabel("corr", fontsize=FONTSIZE)
     ax_corr.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1.0])
     max_t_plot = float(times_hr[t_mask].max())
-    if max_t_plot <= 600:
+    if max_t_plot >= 600:
         ax_corr.set_xticks(np.arange(0, 600, 100))
+    else:
+        ax_corr.set_xticks(np.linspace(0, int(max_t_plot), 6))
     ax_corr.tick_params(axis="both", labelsize=FONTSIZE)
     ax_corr.legend(fontsize=FONTSIZE - 5)
 
@@ -356,11 +358,11 @@ def main():
     fig.tight_layout()
 
     # 8. Save Combined Figure
-    svg_path = run_dir / "Multilayer_Figure4.svg"
+    # svg_path = run_dir / "Multilayer_Figure4.svg"
     png_path = run_dir / "Multilayer_Figure4.png"
-    fig.savefig(svg_path, format="svg", bbox_inches="tight")
+    # fig.savefig(svg_path, format="svg", bbox_inches="tight")
     fig.savefig(png_path, format="png", dpi=300, bbox_inches="tight")
-    print(f"[*] Saved Figure 4 to:\n    {svg_path}\n    {png_path}")
+    print(f"[*] Saved Figure 4 to:\n    {png_path}")# \n    {svg_path}")
 
     plt.show()
 

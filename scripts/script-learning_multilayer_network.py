@@ -39,10 +39,10 @@ def parse_args():
     parser.add_argument("--g", type=float, default=2.0, help="Firing rate nonlinearity exponent")
     parser.add_argument("--gain", type=float, default=1.0, help="Firing rate gain")
     parser.add_argument("--etaJ", type=float, default=5e-4, help="FF learning rate (Hz)")
-    parser.add_argument("--alphaJ", type=float, default=0.1, help="Strength of FF synaptic decay")
-    parser.add_argument("--A_R", type=float, default=10.0, help="Input amplitude (Hz)")
+    parser.add_argument("--alphaJ", type=float, default=0.5, help="Strength of FF synaptic decay")
+    parser.add_argument("--A_R", type=float, default=30.0, help="Input amplitude (Hz)")
     parser.add_argument("--input_std", type=float, default=5.0, help="Input width sigma_R (cm)")
-    parser.add_argument("--w_init_max", type=float, default=100.0, help="Upper bound for uniform random W_ff init")
+    parser.add_argument("--w_init_max", type=float, default=1., help="Upper bound for uniform random W_ff init")
     parser.add_argument("--eval_positions", type=int, default=100, help="Uniform positions in [0, L) for Panels (c-d)")
     parser.add_argument(
         "--betas",
