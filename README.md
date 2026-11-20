@@ -1,4 +1,4 @@
-[README.md](https://github.com/user-attachments/files/35179372/README.md)
+[README.md](https://github.com/user-attachments/files/35179566/README.md)
 # SOCANN-Framework
 
 [![JAX](https://img.shields.io/badge/JAX-Accelerated-blue?logo=google-colab)](https://jax.readthedocs.io/)
@@ -73,9 +73,13 @@ SOCANN-Framework/
 │   ├── demo_learning_ff_rec.py   # Learning simulation (feedforward + recurrent); saves compressed snapshots
 │   └── plot_demo_results.py      # Visualizes the learned weight structures
 │
-├── scripts/                      # Heavy compute jobs (parameter sweeps)
-│   ├── gridsearch_m.py           # Multiprocessing launcher for adaptation parameters
-│   └── gridsearch_alphas.py      # Multiprocessing launcher for weight-learning alphas
+├── scripts/                      # Everything needed to reproduce the paper
+│   ├── scripts-figure<N>/        # Simulation scripts behind each figure (heavy compute)
+│   ├── figure<N>/                # Plotting scripts that generate each figure
+│
+├── data/                         # Folder containing data coming from the scripts to reproduce results
+│
+├── figures/                      # PNG example figures (most of them shown in the paper)
 │
 ├── requirements.txt              # Python dependencies
 ├── LICENSE                       # MIT
@@ -125,7 +129,26 @@ The simulation engine is in `src/engine.py`. To build your own experiments, star
 
 ## Reproducing the Paper
 
-Large parameter sweeps are launched from `scripts/` and parallelized with multiprocessing:
+Every figure in the paper is reproduced in two stages, and the `scripts/` folder is organized accordingly:
+
+| Folder | Purpose |
+| --- | --- |
+| `scripts/scripts-figure<N>/` | **Simulation:** runs the simulations behind Figure `<N>` and saves the results. This is the compute-intensive step. |
+| `scripts/figure<N>/` | **Plotting:** loads the saved results and generates Figure `<N>`. |
+
+**Workflow for a given figure:**
+
+```bash
+# 1. Run the simulations for Figure N (may take a while; GPU recommended)
+python scripts/scripts-figureN/<simulation_script>.py
+
+# 2. Generate the plot from the saved results
+python scripts/figureN/<plotting_script>.py
+```
+
+Replace `N` and the script names with the figure number and files you want to reproduce. Separating the two stages lets you re-style or tweak a figure without re-running the simulations.
+
+Large parameter sweeps are launched with multiprocessing:
 
 ```bash
 # Sweep over firing-rate adaptation parameters
