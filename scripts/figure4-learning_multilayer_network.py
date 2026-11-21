@@ -36,7 +36,7 @@ def parse_args():
     parser.add_argument("--L", type=float, default=70.0, help="Domain length matching the run")
     parser.add_argument("--beta", type=float, default=0.5, help="beta_J matching the run")
     parser.add_argument("--v", type=float, default=20.0, help="Speed v (cm/s) matching the run")
-    parser.add_argument("--m", type=float, default=0.25, help="Adaptation m matching the run")
+    parser.add_argument("--m", type=float, default=0.5, help="Adaptation m matching the run")
     parser.add_argument(
         "--max_hours",
         type=float,

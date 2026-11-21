@@ -35,7 +35,7 @@ def parse_args():
     parser.add_argument("--dt", type=float, default=0.005, help="Integration time step (s)")
     parser.add_argument("--tau", type=float, default=0.015, help="U time constant (s, 15 ms)")
     parser.add_argument("--tauv", type=float, default=0.6, help="V time constant (s, 600 ms)")
-    parser.add_argument("--k", type=float, default=0.01, help="Global inhibition (cm^4 s^2 / syn)")
+    parser.add_argument("--k", type=float, default=3, help="Global inhibition (cm^4 s^2 / syn)")
     parser.add_argument("--g", type=float, default=2.0, help="Firing rate nonlinearity exponent")
     parser.add_argument("--gain", type=float, default=1.0, help="Firing rate gain")
     parser.add_argument("--etaJ", type=float, default=5e-4, help="FF learning rate (Hz)")
@@ -62,7 +62,7 @@ def parse_args():
         "--m_vals",
         type=float,
         nargs="+",
-        default=[0.25],
+        default=[0.5],
         help="List of adaptation strengths m to sweep over",
     )
     parser.add_argument("--seed", type=int, default=42, help="Random seed for initialization")
