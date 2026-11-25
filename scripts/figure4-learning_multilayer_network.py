@@ -61,8 +61,8 @@ def main():
     args = parse_args()
 
     # 1. Locate Run Directory
-    repo_root = Path(__file__).resolve().parent.parent
-    base_data_dir = repo_root.parent / "figure4-learning-multilayer-ff-data"
+    repo_root = Path(__file__).resolve().parent
+    base_data_dir = repo_root.parent / "data" / "figure4-learning-multilayer-ff-data"
 
     if args.run_dir is not None:
         run_dir = Path(args.run_dir)
